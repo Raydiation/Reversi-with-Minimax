@@ -330,6 +330,7 @@ void step(vector<vector<int>>& Board,int x,int y, bool is_black)//Simulate out s
 int main()
 {
     vector<vector<int>> bd(8);
+    //Initial board 0 is unoccupied,1 is black and 2 is white.
     bd[0]={0,0,0,0,0,0,0,0};
     bd[1]={0,0,0,0,0,0,0,0};
     bd[2]={0,0,0,0,0,0,0,0};
@@ -338,7 +339,10 @@ int main()
     bd[5]={0,0,0,0,0,0,0,0};
     bd[6]={0,0,0,0,0,0,0,0};
     bd[7]={0,0,0,0,0,0,0,0};
-    bool ib=1;
+    //
+    bool ib=1;//chess color :1 is black chess player and 0 is white chess player
+    //GetStep(boardstate,chess_color) will return a optimal step by my searching.
+    //step(x,y,chess_color) can simulate a step
     while(1)
     {
         int x,y;
@@ -354,7 +358,7 @@ int main()
         }
         cout<<"------------\n";
         cout<<"CIN: ";
-        cin>>x>>y;
+        cin>>x>>y;//cin step,
         step(bd,x,y,!ib);
         for(int i=0;i<8;i++)
         {
