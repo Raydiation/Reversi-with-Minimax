@@ -135,7 +135,7 @@ int MiniMax::Max(int step, bool is_black, int alpha, int beta)
 	{
 		Makestep(Can_flip[i], is_black);
 
-		value = max(value, Min(step - 1, is_black, alpha, beta));
+		value = max(value, Min(step - 1, !is_black, alpha, beta));
 		if (value >= beta) return value;
 		alpha = max(alpha, value);
 		Board = init;
