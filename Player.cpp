@@ -1,3 +1,4 @@
+#include "MCTS.h"
 #include "MiniMax.h"
 #include <windows.h>
 #include <stdlib.h>
@@ -5,9 +6,14 @@ using namespace std;
 
 vector<int> GetStep(vector<vector<int>>& board, bool is_black)
 {
+    MCTS_UCT MCTS_solver(board, is_black);
+    MCTS_solver.Round(15); //Adjust how many times do a MCTS round
+    return MCTS_solver.Return_Best();
+    /*
     MiniMax MiniMax_solver(board);
-    vector<int> step = MiniMax_solver.miniMax(5, is_black);
+    vector<int> step = MiniMax_solver.miniMax(5, is_black); // Adjust how many layers minimax algorithm will search
     return step;
+    */
 }
 
 int main()
@@ -23,10 +29,18 @@ int main()
     play_board[7] = { 0,0,0,0,0,0,0,0 };
     MiniMax Manager(play_board);
     //
-    bool is_black = 1;//1 for first player, 0 for last player
+    bool is_black = 0;//1 for first player, 0 for last player
     while (1)
     {
-        vector<vector<int>> Valid_Position = Manager.GetFlipPosition(is_black);//Player tern
+        vector<vector<int>>Valid_Position = Manager.GetFlipPosition(!is_black);//AI tern
+        if (Valid_Position.size())
+        {
+            vector<int> ai_step = GetStep(Manager.Board, !is_black);
+            Manager.Makestep(vector<int>{ai_step[0], ai_step[1]}, !is_black);
+            cout << "\n\nAI move-----------------\n\n";
+        }
+
+        Valid_Position = Manager.GetFlipPosition(is_black);//Player tern
         if (Valid_Position.size())
         {
             int x, y;
@@ -50,13 +64,13 @@ int main()
                     Manager.Makestep(vector<int>{x, y}, is_black);
                     system("CLS");
                     Manager.print_board(Manager.Board);
-                    Sleep(5000);
+                    Sleep(500);
                     break;
                 }
                 else
                 {
                     cout << "Invalid step\n";
-                    Sleep(3000);
+                    Sleep(300);
                     system("CLS");
                 }
             }
@@ -64,17 +78,8 @@ int main()
         else
         {
             cout << "No valid step\n";
-            Sleep(5000);
+            Sleep(500);
             system("CLS");
         }
-
-        Valid_Position = Manager.GetFlipPosition(!is_black);//AI tern
-        if (Valid_Position.size())
-        {
-            vector<int> ai_step = GetStep(Manager.Board, !is_black);
-            Manager.Makestep(vector<int>{ai_step[0], ai_step[1]}, !is_black);
-            cout << "\n\nAI move-----------------\n\n";
-        }
     }
-
 }

@@ -94,7 +94,11 @@ void MiniMax::print_board(vector<vector<int>> board)
 	for (int i = 0; i < board.size(); i++)
 	{
 		for (int j = 0; j < board[0].size(); j++)
-			cout << board[i][j] << " ";
+		{
+			if (board[i][j] == 0) cout << "- ";
+			if (board[i][j] == 1) cout << "O ";
+			if (board[i][j] == 2) cout << "X ";
+		}
 		cout << endl;
 	}
 	return;
@@ -104,7 +108,7 @@ vector<int> MiniMax::miniMax(int maxstep, bool is_black)//Run minmax.
 {
 	int value;
 	int best = -INF;
-	vector<int> best_step = { -1,-1 };
+	vector<int> best_step;
 	vector<vector<int>> init = Board;
 	vector<vector<int>> Can_flip = GetFlipPosition(is_black);
 
