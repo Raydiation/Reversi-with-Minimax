@@ -20,21 +20,28 @@ void MCTS_UCT::Round(int max_round)
 
 vector<int> MCTS_UCT::Return_Best()
 {
-    vector<int> best_step = Root->Can_flip[0];
-    double win_rate = 0;
-    for (int i = 0; i < Root->children.size(); i++)
-    {
-        Node *child = Root->children[i];
-        if (10 * child->total_simulation_time >= Root->total_simulation_time && double(child->win_simulation_time) / double(child->total_simulation_time) > win_rate)
-        {
-            best_step = Root->Can_flip[i];
-            win_rate = double(child->win_simulation_time) / double(child->total_simulation_time);
-        }
-    }
-    return best_step;
+    double weighting = 1;
+    Node* best_step = UCB(Root, weighting);
+    return best_step->this_step;
 }
 
-void MCTS_UCT::Selection(Node *current_node)
+Node* MCTS_UCT::UCB(Node* current_node, double parameter)
+{
+    double max_ucb = 0;
+    Node* best_child = current_node->children[0];
+    for (Node* child : current_node->children)
+    {
+        double ucb = double(child->win_simulation_time) / double(child->total_simulation_time) + parameter * sqrt(max(1.0, log2(Root->total_simulation_time)) / double(child->total_simulation_time));
+        if (ucb > max_ucb)
+        {
+            best_child = child;
+            max_ucb = ucb;
+        }
+    }
+    return best_child;
+}
+
+void MCTS_UCT::Selection(Node* current_node)
 {
     if (current_node->children.size() == 0)
     {
@@ -42,9 +49,8 @@ void MCTS_UCT::Selection(Node *current_node)
     }
     else
     {
-        //random pick?
-        uniform_int_distribution<int> distribution_int(0, current_node->children.size() - 1);
-        Selection(current_node->children[distribution_int(generator)]);//random move to a child
+        double weighting = 1;//adjust
+        Selection(UCB(current_node, weighting));//random move to a child
     }
     return;
 }
@@ -55,6 +61,7 @@ void MCTS_UCT::Expansion(Node *current_node)
     {
         Simulate_a_step(current_node->board_state, current_node->Can_flip[i], current_node->is_black);
         Node *child_node = new Node(current_node->board_state, !(current_node->is_black));
+        child_node->this_step = current_node->Can_flip[i];
         current_node->board_state = init;
         current_node->children.push_back(child_node);
         child_node->fatherNode = current_node;
@@ -82,10 +89,10 @@ bool MCTS_UCT::Playout(vector<vector<int>> board, bool is_black)
         for (int j = 0; j < 8; j++)
             if (board[i][j] == 0)
                 unoccupied.push_back({ i,j });
-    while (unoccupied.size())
+    while (!unoccupied.empty())
     {
         vector<vector<int>> Can_flip = GetFlipPosition(board, unoccupied, current_player);
-        if (!Can_flip.size())//If both are no position to put?
+        if (Can_flip.empty())//If both are no position to put?
         {
             if (both_no_flip)break;
             current_player = !current_player;
