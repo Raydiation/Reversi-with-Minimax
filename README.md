@@ -6,11 +6,13 @@ The scoring of each state is difficult, but I think that the main searching algo
 Use only Minimax is not powerful enough I think.  
 
 ### MCTS and UCT  
-I try to implement MCTS for searching, there might have some bug(?) need to be fixed up? And I have not implement UCT yet.  
+I try to implement MCTS for searching, there might have some bug(?) need to be fixed up?  
 
 But I think it's a little powerful than Minimax.  
 
-Next I'll try to combine these two searching stategy  
+How to decide the parameter C in UCT algorithm?  
+
+Next I'll try to combine these two searching stategy.  
 
 -------  
 
