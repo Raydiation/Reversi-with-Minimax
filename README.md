@@ -10,7 +10,7 @@ I try to implement MCTS for searching, there might have some bug(?) need to be f
 
 But I think it's a little powerful than Minimax.  
 
-How to decide the parameter C in UCT algorithm?  
+How to decide the parameter C in UCB?  
 
 Next I'll try to combine these two searching stategy.  
 
